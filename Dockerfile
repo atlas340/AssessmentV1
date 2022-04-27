@@ -1,13 +1,24 @@
-FROM node:16-alpine
+FROM node:16-bullseye
 
-RUN apk add --update
-RUN apk add --update ffmpeg
+RUN apt-get -y update
+RUN apt-get install -y ffmpeg
+RUN apt-get install -y supervisor
 
 
 WORKDIR /app
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 COPY . .
 
 RUN npm install
 
-CMD [ "npm", "run", "start" ]
+# RUN npm install --prefix ./client
+
+# RUN npm run build --prefix ./client
+
+EXPOSE 3000
+
+# EXPOSE 3006
+
+CMD ["/usr/bin/supervisord"]
